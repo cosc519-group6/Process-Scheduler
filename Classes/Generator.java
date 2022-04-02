@@ -4,7 +4,7 @@ import java.util.Random;
 
 //This class randomly generates burst times and arrival times
 //for processes. The user declares the number of processes they
-//wish to generate and the max bust time for and arrival
+//wish to generate and the max burst time and arrival
 //time for each process.
 public class Generator {
   public int[][] Generator(int count, int maxbt, int maxarrt) {
