@@ -2,6 +2,7 @@ package Classes;
 
 import java.util.*;
 
+//Shortest Job First preemptive algorithm, sorted by burst time
 public class SJF{
   public static void SortArray(int[][] arr){
     Arrays.sort(arr, new Comparator<int[]>(){
