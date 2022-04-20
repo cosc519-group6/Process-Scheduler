@@ -24,8 +24,8 @@ class ProcessScheduler {
     //order that we will have for FCFS, so we don't need to write a separate
     //algorithm for that.
     for (int j=0; j<processes.length; j++) {
-      System.out.println(processes[j][0] + " : " + processes[j][1]
-      + " arr time: " + processes[j][2]);
+      System.out.println("pid: " + processes[j][0] + ", burst time: " + processes[j][1]
+      + ", arrival time: " + processes[j][2]);
     }
 
     //Calculate different evaluation metrics
@@ -42,7 +42,8 @@ class ProcessScheduler {
 
     //Print sorted array
     for (int i = 0; i < processes.length; i++) {
-      System.out.println(processes[i][0] + " : " + processes[i][1]);
+      System.out.println("pid: " + processes[i][0] + " burst time: " + processes[i][1]
+      + ", arrival time: " + processes[i][2]);
     }
 
     //Find wait times for SJF algorithm
