@@ -8,11 +8,11 @@ public class Calcs{
     for(int i=0; i<pid; i++) {
       if (i==0) {
         wt = 0;
+        System.out.println("Waiting time is:" + wt);
       }
       else {
-        wt += arr[0][1];
         wt += arr[i][1];
-        System.out.println(wt);
+        System.out.println("Waiting time is:" + wt);
       }
     }
     return wt;
