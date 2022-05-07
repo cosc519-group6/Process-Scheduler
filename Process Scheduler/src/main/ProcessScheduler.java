@@ -143,13 +143,13 @@ public class ProcessScheduler{
 	private float[] printMetrics(Process[] processes) {
 	
 		// store the Utilization score as the percentage of time units not wasted
-		cpuUtilizationPercentage = (((float)time - wasted)/(firstArrival-1)); 	// (firstArrival - 1) because the time unit of the arrival isn't wasted.
+		cpuUtilizationPercentage = (((float)time - wasted)/(time - firstArrival+1)); 	// (firstArrival - 1) because the time unit of the arrival isn't wasted.
 		metrics[0] = cpuUtilizationPercentage;
 		
 		System.out.println("Execution Time: " + time);
 		// (firstArrival - 1) because the time unit of the arrival isn't waisted.
 		System.out.println("CPU Utilization: " + (time - wasted) + "/" + (time) +
-							", minus initial wait: " + (time - (firstArrival-1)) + "/" + (time));
+							", minus initial wait: " + (time - wasted) + "/" + (time - firstArrival+1));
 		
 		
 		// store the average waiting time
