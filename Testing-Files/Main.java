@@ -82,9 +82,9 @@ class Main {
 
 		//write FCFS results to array
 		float metricsFCFS[] = new float[3];
-		metricsFCFS = scheduler.printMetrics(a, false);
-		String resultsFCFS = Arrays.toString(metricsFCFS);
-		resultsFCFS = resultsFCFS.replaceAll("[\\p{Pe}\\p{Ps}]","");
+		metricsFCFS = scheduler.printMetrics(a, false); //add results to array
+		String resultsFCFS = Arrays.toString(metricsFCFS); //convert array to String so we can add to file
+		resultsFCFS = resultsFCFS.replaceAll("[\\p{Pe}\\p{Ps}]",""); //remove brackets from String 
 
 		//run shortest job first
 		scheduler = new ProcessScheduler();
@@ -108,11 +108,12 @@ class Main {
 		String resultsRR = Arrays.toString(metricsRR);
 		resultsRR = resultsRR.replaceAll("[\\p{Pe}\\p{Ps}]","");
 
-		//write to three seperate results files for each algorithm
+		//Must declare 3 Writers so it doesn't overwrite itself.
 		Writer outputFCFS;
 		Writer outputSJF;
 		Writer outputRR;
 
+		//Write to a seperate result file for each algorithm.
 		try {
 			outputFCFS = new BufferedWriter(new FileWriter("resultsFCFS.txt", true));
 			outputFCFS.append(resultsFCFS + "\n");
