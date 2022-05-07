@@ -133,29 +133,10 @@ public class ProcessScheduler{
 		printMetrics(processes, false);
 	}
 
-	// public int[] writeMetrics(Process[] processes, boolean isLoud) {
-	// 	int cpu = (time-wasted) + time;
-	//
-	// 	for (int p = 0; p < wait.length; p++) {
-	// 		total += wait[p];
-	//
-	// 		if(isLoud) {
-	// 			System.out.println(processes[p] +
-	// 					" arrived at time unit " + processes[p].getArrivalTime() +
-	// 					" and waited " + wait[p] + " time units.");
-	// 		}
-	// 		}
-	//
-	// 	int avgWaitTime = total/count;
-	//
-	// 	int metrics[] = new int[2];
-	//
-	// 	metrics[0] = cpu;
-	// 	metrics[1] = avgWaitTime;
-	// 	return metrics;
-	// }
 
 	public float[] printMetrics(Process[] processes, boolean isLoud) {
+		
+		//floats to store results
 		float cpu;
 		float avgWaitTime;
 		float avgResponseTime;
@@ -164,9 +145,11 @@ public class ProcessScheduler{
 		// (firstArrival - 1) because the time unit of the arrival isn't waisted.
 		System.out.println("CPU Utilization: " + (time - wasted) + "/" + (time) +
 							", minus initial wait: " + (time - (firstArrival-1)) + "/" + (time));
-		float timef = time;
+		
+		float timef = time; //convert to float because we may get a decimal value
 		float firstArrivalf = firstArrival;
-		cpu = ((timef - (firstArrivalf-1))/(timef));
+		cpu = ((timef - (firstArrivalf-1))/(timef)); //write variable
+		
 		// print average waiting time
 		for (int p = 0; p < wait.length; p++) {
 			total += wait[p];
@@ -178,7 +161,7 @@ public class ProcessScheduler{
 			}
 		}
 		System.out.println("Average Waiting Time: " + (total / count));
-		avgWaitTime = total/count;
+		avgWaitTime = total/count; //write variable
 
 		// print average response time
 		total = 0;
@@ -193,17 +176,18 @@ public class ProcessScheduler{
 			}
 		}
 		System.out.println("Average Response Time: " + (total / count));
-		avgResponseTime = total/count;
+		
+		avgResponseTime = total/count; //write variable
 
 		System.out.println("\nProcess ID Gantt:");
 		Gantt(gantt);
 
-		float metrics[] = new float[3];
-		metrics[0] = cpu;
+		float metrics[] = new float[3]; //declare array
+		metrics[0] = cpu; //add variables to array
 		metrics[1] = avgWaitTime;
 		metrics[2] = avgResponseTime;
 
-		return metrics;
+		return metrics; //return the metrics
 	}
 
 	private int scheduler(String algorithm) {
