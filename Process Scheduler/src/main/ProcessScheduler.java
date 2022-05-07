@@ -62,6 +62,13 @@ public class ProcessScheduler{
 	SJF sjf = new SJF();
 	RR rr = new RR();
 	
+	// Declare metrics information
+	float cpuUtilizationPercentage;
+	float avgWaitTime;
+	float avgResponseTime;
+	
+	// Declare metrics array to store information about algorithm performance
+	float[] metrics = new float[3];
 	
 	/* ================================================ +
 	 * 				run(Process[], String)				|
@@ -69,7 +76,7 @@ public class ProcessScheduler{
 	 *  - runs a while loop, scheduling processes until |
 	 *    all reach completion.							|
 	 * ================================================	*/
-	public void run(Process[] processes, String algorithm) {
+	public float[] run(Process[] processes, String algorithm) {
 		
 		// store the number of processes
 		count = processes.length;
@@ -130,45 +137,40 @@ public class ProcessScheduler{
 				break;
 			}
 		}	
-		printMetrics(processes, false);
+		return printMetrics(processes);
 	}
 	
-	private void printMetrics(Process[] processes, boolean isLoud) {
+	private float[] printMetrics(Process[] processes) {
+	
+		// store the Utilization score as the percentage of time units not wasted
+		cpuUtilizationPercentage = (((float)time - wasted)/(firstArrival-1)); 	// (firstArrival - 1) because the time unit of the arrival isn't wasted.
+		metrics[0] = cpuUtilizationPercentage;
 		
 		System.out.println("Execution Time: " + time);
 		// (firstArrival - 1) because the time unit of the arrival isn't waisted.
-		System.out.println("CPU Utilization: " + (time - wasted) + "/" + (time) + 
+		System.out.println("CPU Utilization: " + (time - wasted) + "/" + (time) +
 							", minus initial wait: " + (time - (firstArrival-1)) + "/" + (time));
 		
-		// print average waiting time
-		for (int p = 0; p < wait.length; p++) {
-			total += wait[p];
-			
-			if(isLoud) {
-				System.out.println(processes[p] +
-						" arrived at time unit " + processes[p].getArrivalTime() + 
-						" and waited " + wait[p] + " time units.");
-			}
-		}
-		System.out.println("Average Waiting Time: " + (total / count));
 		
-		// print average response time
+		// store the average waiting time
+		for (int p = 0; p < wait.length; p++) { total += wait[p]; }
+		avgWaitTime = (float)total/count;
+		metrics[1] = avgWaitTime;
+		
+		// store the average response time
 		total = 0;
 		for (int q = 0; q < firstRun.size(); q++) {	
 			int[] array = firstRun.get(q);
 			total += array[1] - processes[array[0]-1].getArrivalTime();
-			
-			if(isLoud) {
-				System.out.println(" At time unit " + processes[array[0]-1].getArrivalTime() + 
-						", Process " + array[0] +
-						" arrived. It ran at time unit " + array[1] + ".");
-			}
 		}
-		System.out.println("Average Response Time: " + (total / count));
-
-		System.out.println("\nProcess ID Gantt:");
-		Gantt(gantt);
+		avgResponseTime = (float)total/count;
+		metrics[2] = avgResponseTime;
 		
+		// Print Gantt for quick analysis of performance when testing
+		System.out.println("\nProcess ID Gantt:");
+		gantt(gantt);
+		
+		return metrics;
 	}
 	
 	private int scheduler(String algorithm) {
@@ -221,7 +223,7 @@ public class ProcessScheduler{
 		}
 	}
 	
-	private void Gantt(ArrayList<Integer> gantt) {
+	private void gantt(ArrayList<Integer> gantt) {
 		if(gantt.size() < 30)
 			System.out.println(gantt);
 		else {

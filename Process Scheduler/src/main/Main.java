@@ -2,6 +2,12 @@ package main;
 
 import process_management.*;
 import process_management.Process;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Arrays;
 
 class Main {
 	/* ================================================ +
@@ -13,7 +19,7 @@ class Main {
 	 *  - Runs the ProcessScheduler for each of the		| 
 	 *    defined algorithms. 							|
 	 * ================================================	*/
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		/* ================================================ +
 		 * 					Initializations					|
 		 * ================================================ +
@@ -25,16 +31,16 @@ class Main {
 		 * ================================================	*/
 		
 		// Declare number of processes
-		int count = 10;
+		int count = 5;
 	
 		// Declare max burst time
-		int maxbt = 8;
+		int maxbt = 10;
 	
 		// Declare max arrival time
-		int maxarrt = 10;
+		int maxarrt = 30;
 
 		// Declare scheduler
-		ProcessScheduler scheduler;
+		ProcessScheduler scheduler;	
 		
 		/* ================================================ +
 		 * 					   Generator					|
@@ -54,11 +60,11 @@ class Main {
 		Process[] c = clone(processes);
 		
 		// Output to visualize the generated processes
-		System.out.printf("%-7s%-7s%-7s\n","PID","Arival","Burst");
+		System.out.printf("%-7s%-7s%-7s%n","PID","Arival","Burst");
 		for(int i = 0; i < processes.length; i++) {
-			System.out.printf("%-7s%-7s%-7s\n",(i+1),processes[i].getArrivalTime(),processes[i].getBurstTime());
+			System.out.printf("%-7s%-7s%-7s%n",(i+1),processes[i].getArrivalTime(),processes[i].getBurstTime());
 		}
-		System.out.printf("\n");
+		System.out.printf("%n");
 		
 		/* ================================================ +
 		 * 					   Algorithms					|
@@ -68,20 +74,24 @@ class Main {
 		 *  - Outputs are printed for comparison. 			|
 		 * ================================================	*/
 		
-		//run first come first serve
+		//run first come first serve and write to output file
 		scheduler = new ProcessScheduler();
 		System.out.println("FCFS ======== ");
-		scheduler.run(a, "fcfs");
+
+		writeMetrics(scheduler.run(a, "fcfs"), "resultsFCFS.txt");
 		
 		//run shortest job first
 		scheduler = new ProcessScheduler();
 		System.out.println("\nSJF ======== ");
-		scheduler.run(b, "sjf");
+		
+		writeMetrics(scheduler.run(b, "sjf"), "resultsSJF.txt");
 		
 		//run round robin
 		scheduler = new ProcessScheduler();
 		System.out.println("\nRR ======== ");
-		scheduler.run(c, "rr");
+		
+		writeMetrics(scheduler.run(c, "rr"), "resultsRR.txt");
+		
 	}
 	
 	/* ================================================ +
@@ -98,6 +108,24 @@ class Main {
 			copy[i] = original[i].clone();
 		}
 		return copy;
+	}
+	
+	/* ================================================ +
+	 * 			 writeMetrics(float[], String)			|
+	 * ================================================ +
+	 *  - writes the metric results of an algorithm to  |
+	 *    its own output text file.						|
+	 * ================================================	*/
+	private static void writeMetrics(float[] metrics, String name) throws IOException {
+		String resultsFCFS = Arrays.toString(metrics); //convert array to String so we can add to file
+		resultsFCFS = resultsFCFS.replaceAll("[\\p{Pe}\\p{Ps}]",""); //remove brackets from String 
+		
+		String metricsDir = System.getProperty("user.dir") + "\\src\\metrics\\" + name; //gets directory to store metrics in
+		
+		try (Writer writer = new BufferedWriter(new FileWriter(new File(metricsDir), true));) {
+			writer.append(resultsFCFS + "\n");
+		} 
+		catch(Exception e) { /* Block of code to handle errors*/ }
 	}
 }
 
