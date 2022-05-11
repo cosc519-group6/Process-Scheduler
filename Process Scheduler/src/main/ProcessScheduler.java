@@ -27,6 +27,9 @@ public class ProcessScheduler{
 	// Declare time unit variable
 	int time = 0;
 	
+	// Declare execution time (milli) variable
+	long executionTime = 0;
+	
 	// Declare first arrival variable
 	int firstArrival = 0;
 		
@@ -68,7 +71,16 @@ public class ProcessScheduler{
 	float avgResponseTime;
 	
 	// Declare metrics array to store information about algorithm performance
-	float[] metrics = new float[3];
+	float[] metrics = new float[4];
+	
+	// test output avg
+	float avg = 0;
+	
+	// run with output
+	public float[] run(Process[] processes, String algorithm) {
+		return run(processes,algorithm, false);
+	}
+	
 	
 	/* ================================================ +
 	 * 				run(Process[], String)				|
@@ -76,8 +88,8 @@ public class ProcessScheduler{
 	 *  - runs a while loop, scheduling processes until |
 	 *    all reach completion.							|
 	 * ================================================	*/
-	public float[] run(Process[] processes, String algorithm) {
-		
+	public float[] run(Process[] processes, String algorithm, boolean mute) {
+		long startTime = System.currentTimeMillis();
 		// store the number of processes
 		count = processes.length;
 		
@@ -108,8 +120,11 @@ public class ProcessScheduler{
 				}
 			}
 	    	//System.out.println(queue.toString()); //(testing print)
-	    	
+	    	long startTime2 = System.nanoTime();
 			pid = scheduler(algorithm);
+			executionTime = System.nanoTime()- startTime2;
+			
+			avg += executionTime;
 			
 			// Document which process ran on this time unit in the gantt
 			gantt.add(pid);
@@ -136,27 +151,26 @@ public class ProcessScheduler{
 			if(done(processes)) {
 				break;
 			}
-		}	
-		return printMetrics(processes);
+		}
+		if(!mute) System.out.printf("%41s%s%n","Algorithm Time (Nanoseconds): ",(avg / time));
+		executionTime = System.currentTimeMillis()- startTime;
+		if(!mute) System.out.println("Scheduler Execution Time (Milliseconds): " + executionTime);
+		return printMetrics(processes, executionTime, mute);
 	}
 	
-	private float[] printMetrics(Process[] processes) {
+	private float[] printMetrics(Process[] processes, long executionTime, boolean mute) {
 	
-		// store the Utilization score as the percentage of time units not wasted
-		cpuUtilizationPercentage = (((float)time - wasted)/(time - firstArrival+1)); 	// (firstArrival - 1) because the time unit of the arrival isn't wasted.
-		metrics[0] = cpuUtilizationPercentage;
+		// store the algorithm time
+		metrics[0] = (avg / time);
 		
-		System.out.println("Execution Time: " + time);
-		// (firstArrival - 1) because the time unit of the arrival isn't waisted.
-		System.out.println("CPU Utilization: " + (time - wasted) + "/" + (time) +
-							", minus initial wait: " + (time - wasted) + "/" + (time - firstArrival+1));
-		
+		// store the execution time
+		metrics[1] = executionTime;
 		
 		// store the average waiting time
 		for (int p = 0; p < wait.length; p++) { total += wait[p]; }
 		avgWaitTime = (float)total/count;
-		metrics[1] = avgWaitTime;
-		
+		metrics[2] = avgWaitTime;
+		if(!mute) System.out.printf("%n%41s%s%n","Avg Wait Time (Units): ",avgWaitTime);
 		// store the average response time
 		total = 0;
 		for (int q = 0; q < firstRun.size(); q++) {	
@@ -164,11 +178,13 @@ public class ProcessScheduler{
 			total += array[1] - processes[array[0]-1].getArrivalTime();
 		}
 		avgResponseTime = (float)total/count;
-		metrics[2] = avgResponseTime;
+		metrics[3] = avgResponseTime;
+		if(!mute) System.out.printf("%41s%s%n","Avg Response Time (Units): ",avgResponseTime);
 		
-		// Print Gantt for quick analysis of performance when testing
+		
+		/*//Print Gantt for quick analysis of performance when testing
 		System.out.println("\nProcess ID Gantt:");
-		gantt(gantt);
+		gantt(gantt);*/
 		
 		return metrics;
 	}

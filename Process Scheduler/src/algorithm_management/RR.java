@@ -19,7 +19,7 @@ public class RR{
 	int timer = 0;
 	
 	// Declare a time quantum, how many times a process can run in a row before next is loaded
-	int q = 2;
+	int q = 5;
 	
 	// Declare a variable to hold a reference to the last PID run
 	int previousLength;

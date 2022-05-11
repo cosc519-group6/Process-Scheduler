@@ -31,13 +31,13 @@ class Main {
 		 * ================================================	*/
 		
 		// Declare number of processes
-		int count = 5;
+		int count = 500;
 	
 		// Declare max burst time
-		int maxbt = 10;
+		int maxbt = 250;
 	
 		// Declare max arrival time
-		int maxarrt = 30;
+		int maxarrt = 200;
 
 		// Declare scheduler
 		ProcessScheduler scheduler;	
@@ -55,16 +55,27 @@ class Main {
 		// Randomly generate processes
 		Generator gen = new Generator();
 		Process[] processes = gen.generateProcesses(count, maxbt, maxarrt);
-		Process[] a = clone(processes);
-		Process[] b = clone(processes);
-		Process[] c = clone(processes);
 		
 		// Output to visualize the generated processes
-		System.out.printf("%-7s%-7s%-7s%n","PID","Arival","Burst");
+		/*System.out.printf("%-7s%-7s%-7s%n","PID","Arrival","Burst");
 		for(int i = 0; i < processes.length; i++) {
 			System.out.printf("%-7s%-7s%-7s%n",(i+1),processes[i].getArrivalTime(),processes[i].getBurstTime());
 		}
-		System.out.printf("%n");
+		System.out.printf("%n");*/
+		
+		System.out.println("Process Count: " + (count));
+		
+		int total = 0;
+		for(int i = 0; i < processes.length; i++) {
+			total += processes[i].getBurstTime();
+		}
+		System.out.println("Avg Burst Time: " + (total / count));
+		
+		total = 0;
+		for(int i = 0; i < processes.length; i++) {
+			total += processes[i].getArrivalTime();
+		}
+		System.out.println("Avg Arrival Time: " + (total / count));
 		
 		/* ================================================ +
 		 * 					   Algorithms					|
@@ -74,23 +85,35 @@ class Main {
 		 *  - Outputs are printed for comparison. 			|
 		 * ================================================	*/
 		
+		//run to init all variables so the timing is fair, no output
+		scheduler = new ProcessScheduler();
+		scheduler.run(clone(processes), "fcfs", true);
+		
 		//run first come first serve and write to output file
 		scheduler = new ProcessScheduler();
-		System.out.println("FCFS ======== ");
+		System.out.println("\nFCFS ================================================ ");
 
-		writeMetrics(scheduler.run(a, "fcfs"), "resultsFCFS.txt");
+		writeMetrics(scheduler.run(clone(processes), "fcfs"), "resultsFCFS.txt");
+		
+		//run to init all variables so the timing is fair, no output
+		scheduler = new ProcessScheduler();
+		scheduler.run(clone(processes), "sjf", true);
 		
 		//run shortest job first
 		scheduler = new ProcessScheduler();
-		System.out.println("\nSJF ======== ");
+		System.out.println("\nSJF ================================================ ");
 		
-		writeMetrics(scheduler.run(b, "sjf"), "resultsSJF.txt");
+		writeMetrics(scheduler.run(clone(processes), "sjf"), "resultsSJF.txt");
+		
+		//run to init all variables so the timing is fair, no output
+		scheduler = new ProcessScheduler();
+		scheduler.run(clone(processes), "rr", true);
 		
 		//run round robin
 		scheduler = new ProcessScheduler();
-		System.out.println("\nRR ======== ");
+		System.out.println("\nRR ================================================ ");
 		
-		writeMetrics(scheduler.run(c, "rr"), "resultsRR.txt");
+		writeMetrics(scheduler.run(clone(processes), "rr"), "resultsRR.txt");
 		
 	}
 	
